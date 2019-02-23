@@ -1,4 +1,6 @@
-class NeuralNetwork { //<>//
+int BLOCK_SIZE = 4; //<>//
+
+class NeuralNetwork {
   Node[] inputs = new Node[1];
 
   Neuron[][] layer;
@@ -30,7 +32,7 @@ class NeuralNetwork { //<>//
 
 
       //Add this layer of neurons to the list to add to the neuron generator
-      layerNeuronGenerator.clear();
+      //layerNeuronGenerator.clear();
       for (int k = 0; k < layer[i].length; k++) {
         layerNeuronGenerator.addNode(layer[i][k]);
       }
@@ -39,6 +41,7 @@ class NeuralNetwork { //<>//
     //Build the output layer
     for (int i = 0; i < outputs.length; i++) {
       outputs[i] = outputNeuronGenerator.buildNeuron();
+      //outputs[i] = layerNeuronGenerator.buildNeuron();
     }
   }
 
@@ -132,7 +135,13 @@ class NeuralNetwork { //<>//
   void reviveDeadNeuron(Neuron initialDeadNeuron) {
     //Reset the weights
     for (int i = 0; i < initialDeadNeuron.weights.length; i++) {
-      initialDeadNeuron.weights[i]+=random(-0.2, 0.2);
+      if (initialDeadNeuron.weights[i]>0.3 && initialDeadNeuron.inputs[i] instanceof Neuron) {
+        Neuron in = (Neuron)initialDeadNeuron.inputs[i];
+        for (int j = 0; j < in.weights.length; j++) {
+          in.weights[j]+=random(-1.0, 1.0)*LEARNING_RATE*abs(initialDeadNeuron.weights[i]);
+        }
+      }
+      initialDeadNeuron.weights[i]+=random(-0.01, 0.01);
     }
   }
 
@@ -157,15 +166,16 @@ class NeuralNetwork { //<>//
   }
 
   void display() {
+    int maxHeight = (height-96)/BLOCK_SIZE;
     pushMatrix();
 
     //Inputs
     pushMatrix();
     for (int i = 0; i < inputs.length; i++) {
-      if (i%36==0) {
+      if (i%maxHeight==0) {
         popMatrix();
         pushMatrix();
-        translate(BLOCK_SIZE*i/36, BLOCK_SIZE);
+        translate(BLOCK_SIZE*i/maxHeight, BLOCK_SIZE);
       }
       inputs[i].display();
       translate(0, BLOCK_SIZE);
@@ -173,7 +183,7 @@ class NeuralNetwork { //<>//
     popMatrix();
 
     //Inputs
-    translate((inputs.length/36+2)*BLOCK_SIZE, BLOCK_SIZE);
+    translate((inputs.length/maxHeight+2)*BLOCK_SIZE, BLOCK_SIZE);
     for (int i = 0; i < layer.length; i++) {
       pushMatrix();
       for (int j = 0; j < layer[i].length; j++) {

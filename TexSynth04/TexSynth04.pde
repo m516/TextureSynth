@@ -1,4 +1,4 @@
-PImage baseImage, targetImage;
+PImage baseImage, targetImage, output;
 int SEARCH_RADIUS = 12;
 
 boolean VERBOSE = false;
@@ -8,10 +8,10 @@ final color RED = color(200, 0, 0);
 TextureNet t;
 
 void setup() {
-  baseImage = loadImage("../data/02.png");
+  baseImage = loadImage("../data/01.jpg");
   targetImage=loadImage("../data/02.png");
   image(targetImage, 0, 0);
-  size(800, 600);
+  size(1200, 800);
   noStroke();
 
 
@@ -30,8 +30,38 @@ int iterations = 0;
 
 void draw() {
 
-  if (key!='n') {
-    for (int i = 0; i < 50; i++) {
+  if (key=='s') {
+    targetImage.loadPixels();
+    for (int i = SEARCH_RADIUS; i < baseImage.width-SEARCH_RADIUS; i++) {
+      t.compute(baseImage, i, y);
+      set(i+480, y+32, t.getOutput());
+    }
+    y++;
+    if (y>=baseImage.height-SEARCH_RADIUS) {
+      y = SEARCH_RADIUS;
+    }
+  } else if (key == 'o') {
+    if (output==null) {
+      output = targetImage.copy();
+      if (y>=output.height-SEARCH_RADIUS) {
+        y = SEARCH_RADIUS;
+      }
+    }
+    output.loadPixels();
+    for (int i = SEARCH_RADIUS; i < output.width-SEARCH_RADIUS; i++) {
+      t.compute(output, i, y);
+      output.pixels[y*output.width+i] = lerpColor(output.pixels[y*output.width+i],t.getOutput(),0.25);
+    }
+    y++;
+    if (y>=output.height-SEARCH_RADIUS) {
+      y = SEARCH_RADIUS;
+    }
+    output.updatePixels();
+    image(output,480,32);
+  } else {
+    output = null;
+    
+    for (int i = 0; i < (key=='f'?50:10); i++) {
       int x2=int(random(SEARCH_RADIUS, baseImage.width-SEARCH_RADIUS));
       int y2=int(random(SEARCH_RADIUS, baseImage.height-SEARCH_RADIUS));
       t.compute(baseImage, x2, y2);
@@ -92,14 +122,5 @@ void draw() {
     //set(x+480, y+32, t.getOutput());
 
     iterations++;
-  } else {
-    for (int i = SEARCH_RADIUS; i < baseImage.width-SEARCH_RADIUS; i++) {
-      t.compute(baseImage, i, y);
-      set(i+480, y+32, t.getOutput());
-    }
-    y++;
-    if (y>=baseImage.height-SEARCH_RADIUS) {
-      y = SEARCH_RADIUS;
-    }
   }
 }

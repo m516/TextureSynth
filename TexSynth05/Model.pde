@@ -1,14 +1,4 @@
-
-int BLOCK_SIZE=4;
-
-
-
-
- //<>//
-
-
-
-class TextureNet {
+class TextureNet { //<>//
   PImage texture;
   int COMPUTE_RADIUS = 2;
   NeuralNetwork net;
@@ -24,7 +14,7 @@ class TextureNet {
 
     //Set up the network
     COMPUTE_RADIUS = computeRadius;
-    net = new NeuralNetwork(COMPUTE_RADIUS*COMPUTE_RADIUS*12, 16, 128, 3);
+    net = new NeuralNetwork(COMPUTE_RADIUS*COMPUTE_RADIUS*12, 4, 64, 3);
 
     //Set up input and output arrays
     inputs = new float[net.inputs.length];
