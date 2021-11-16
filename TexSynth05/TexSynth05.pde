@@ -8,8 +8,8 @@ final color RED = color(200, 0, 0);
 TextureNet t;
 
 void setup() {
-  baseImage = loadImage("../data/02.png");
-  targetImage=loadImage("../data/seedSmall.png");
+  baseImage = loadImage("../data/source.jpg");
+  targetImage=loadImage("../data/source.jpg");
   image(targetImage, 0, 0);
   size(1200, 800);
   noStroke();

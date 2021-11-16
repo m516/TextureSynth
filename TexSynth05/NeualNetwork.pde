@@ -1,4 +1,6 @@
 int BLOCK_SIZE = 4; //<>//
+float NEURON_ERROR_TO_REVIVE = 0.3;
+
 
 class NeuralNetwork {
   Node[] inputs = new Node[1];
@@ -109,14 +111,14 @@ class NeuralNetwork {
     //Train the output layer
     for (int i = 0; i < outputs.length; i++) {
       outputs[i].calculateError(expected[i]);
-      if (abs(outputs[i].error)>0.9) reviveDeadNeuron(outputs[i]);
+      if (abs(outputs[i].error)>NEURON_ERROR_TO_REVIVE) reviveDeadNeuron(outputs[i]);
       else outputs[i].train();
     }
 
     //Train the hidden layer
     for (int i = layer.length-1; i >= 0; i--) {
       for (int j = 0; j < layer[i].length; j++) {
-        if (abs(layer[i][j].error)>0.9) reviveDeadNeuron(layer[i][j]);
+        if (abs(layer[i][j].error)>NEURON_ERROR_TO_REVIVE) reviveDeadNeuron(layer[i][j]);
         else layer[i][j].train();
       }
     }
